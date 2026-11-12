@@ -533,4 +533,13 @@ meterForm.addEventListener("submit", (event) => {
 document.getElementById("addApartment").addEventListener("click", addApartment);
 apartmentRows.addEventListener("click", removeApartment);
 document.getElementById("downloadPdf").addEventListener("click", downloadReport);
+document.getElementById("logoutButton").addEventListener("click", () => {
+  try {
+    sessionStorage.removeItem("lectoraNovaAuthenticated");
+    window.location.replace("../index.html");
+  } catch (error) {
+    console.error("No se pudo cerrar la sesión de Lectora Nova.", error);
+    formMessage.textContent = "No se pudo cerrar la sesión. Cierra la pestaña para salir.";
+  }
+});
 updateCalculations();

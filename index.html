@@ -23,17 +23,18 @@
         <!-- Formulario de Inicio de Sesión (Login) -->
         <div class="form-box Login">
             <h2 class="animation" data-i18n="loginTitle" style="--D:0; --S:21;">Login</h2>
-            <form action="#">
+            <form id="loginForm" action="#">
                 <div class="input-box animation" style="--D:1; --S:22;">
-                    <input type="text" required>
+                    <input id="loginUsername" name="username" type="text" autocomplete="username" required>
                     <label data-i18n="username">Username</label>
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box animation" style="--D:2; --S:23;">
-                    <input type="password" required>
+                    <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
                     <label data-i18n="password">Password</label>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
+                <p class="auth-message" id="loginMessage" role="status" aria-live="polite"></p>
                 <div class="input-box animation" style="--D:3; --S:24;">
                     <button class="btn" type="submit" data-i18n="loginButton">Login</button>
                 </div>
@@ -52,7 +53,7 @@
         <!-- Formulario de Registro (Register) -->
         <div class="form-box Register">
             <h2 class="animation" data-i18n="registerTitle" style="--li:17; --S:0;">Register</h2>
-            <form action="#">
+            <form id="registerForm" action="#">
                 <div class="input-box animation" style="--li:18; --S:1;">
                     <input type="text" required>
                     <label data-i18n="username">Username</label>
@@ -71,6 +72,7 @@
                 <div class="input-box animation" style="--li:21; --S:4;">
                     <button class="btn" type="submit" data-i18n="registerButton">Register</button>
                 </div>
+                <p class="auth-message" id="registerMessage" role="status" aria-live="polite"></p>
                 <div class="regi-link animation" style="--li:22; --S:5;">
                     <p><span data-i18n="haveAccount">Already have an account?</span> <a href="#" class="SignInLink" data-i18n="signIn">Sign In</a></p>
                 </div>

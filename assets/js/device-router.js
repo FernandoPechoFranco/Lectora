@@ -1,4 +1,15 @@
 (() => {
+  try {
+    if (sessionStorage.getItem("lectoraNovaAuthenticated") !== "true") {
+      window.location.replace("../index.html");
+      return;
+    }
+  } catch (error) {
+    console.error("No se pudo comprobar la sesión de Lectora Nova.", error);
+    window.location.replace("../index.html");
+    return;
+  }
+
   const mobileQuery = window.matchMedia("(max-width: 760px)");
   const currentPageIsMobile = window.location.pathname.endsWith("/dashboardM.html");
 
