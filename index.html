@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111116">
+  <title>Login &amp; Register</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="assets/js/script.js" defer></script>
+</head>
+<body>
+  <main class="auth-card" id="authCard" aria-label="Login and registration">
+    <div class="brand-panel" aria-hidden="true">
+      <div class="brand-copy login-copy">
+        <h2>WELCOME<br>BACK!</h2>
+        <p>We are happy to have you with us again. If you need anything, we are here to help.</p>
+      </div>
+      <div class="brand-copy register-copy">
+        <h2>WELCOME!</h2>
+        <p>We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
+      </div>
+    </div>
+
+    <section class="form-panel login-panel" id="loginPanel" aria-labelledby="loginTitle">
+      <form id="loginForm">
+        <h1 id="loginTitle">Login</h1>
+
+        <div class="field">
+          <label for="loginUsername">Username</label>
+          <div class="input-wrap">
+            <input id="loginUsername" name="username" type="text" autocomplete="username" required>
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.1 0-7 2.1-7 5v1h14v-1c0-2.9-2.9-5-7-5Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <button class="submit-button" type="submit">Login</button>
+        <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
+        <p class="switch-prompt">Don't have an account? <button class="text-button" type="button" data-mode="register">Sign Up</button></p>
+      </form>
+    </section>
+
+    <section class="form-panel register-panel" id="registerPanel" aria-labelledby="registerTitle" aria-hidden="true" inert>
+      <form id="registerForm">
+        <h1 id="registerTitle">Register</h1>
+
+        <div class="field">
+          <label for="registerUsername">Username</label>
+          <div class="input-wrap">
+            <input id="registerUsername" name="username" type="text" autocomplete="username" required>
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.1 0-7 2.1-7 5v1h14v-1c0-2.9-2.9-5-7-5Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="registerEmail">Email</label>
+          <div class="input-wrap">
+            <input id="registerEmail" name="email" type="email" autocomplete="email" required>
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 5h18v14H3V5Zm2 2v.4l7 5.2 7-5.2V7l-7 5-7-5Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="registerPassword">Password</label>
+          <div class="input-wrap">
+            <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" required>
+            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/>
+            </svg>
+          </div>
+        </div>
+
+        <button class="submit-button" type="submit">Register</button>
+        <p class="form-status" id="registerStatus" role="status" aria-live="polite"></p>
+        <p class="switch-prompt">Already have an account? <button class="text-button" type="button" data-mode="login">Sign In</button></p>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
