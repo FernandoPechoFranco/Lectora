@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a24">
+  <title>Lectora Nova | Lectura de medidores</title>
+  <link rel="stylesheet" href="../assets/css/meter-reader.css">
+  <script src="../assets/js/meter-reader.js" defer></script>
+</head>
+<body class="meter-page desktop-page" data-layout="desktop">
+  <div class="meter-shell">
+    <header class="app-header">
+      <a class="brand-identity" href="../index.html" aria-label="Volver a Lectora Nova">
+        <span class="brand-icon">LN</span>
+        <span class="brand-copy">
+          <strong>Lectora Nova</strong>
+          <small>Control de medidores</small>
+        </span>
+      </a>
+      <a class="device-link" href="dashboardM.html">Abrir versión celular <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="page-heading">
+        <div>
+          <p class="eyebrow">LECTURA MENSUAL</p>
+          <h1>Consumo por departamento</h1>
+          <p class="page-description">Ingresa las lecturas de cada submedidor y calcula cuánto corresponde cobrar.</p>
+        </div>
+        <label class="month-field" for="billingMonth">
+          <span>Mes de consumo</span>
+          <input id="billingMonth" name="billingMonth" type="month" required>
+        </label>
+      </section>
+
+      <form id="meterForm">
+        <section class="receipt-grid" aria-label="Datos del recibo principal">
+          <label class="receipt-card" for="billTotal">
+            <span class="receipt-label">Monto total del recibo</span>
+            <span class="money-input">
+              <span>S/.</span>
+              <input id="billTotal" name="billTotal" type="number" min="0" step="0.01" value="600" required>
+            </span>
+            <small>Monto cobrado por la empresa eléctrica</small>
+          </label>
+
+          <label class="receipt-card" for="generalKwh">
+            <span class="receipt-label">Consumo del medidor general</span>
+            <span class="unit-input">
+              <input id="generalKwh" name="generalKwh" type="number" min="0.01" step="0.01" value="750" required>
+              <span>kWh</span>
+            </span>
+            <small>Consumo total indicado en el recibo</small>
+          </label>
+
+          <label class="receipt-card" for="collectionMargin">
+            <span class="receipt-label">Excedente sobre el recibo</span>
+            <span class="money-input">
+              <span>S/.</span>
+              <input id="collectionMargin" name="collectionMargin" type="number" min="0" step="0.01" value="1" required>
+            </span>
+            <small>Se suma al total y se reparte por consumo</small>
+          </label>
+
+          <div class="receipt-card rate-card">
+            <span class="receipt-label">Tarifa de cobro por kWh</span>
+            <output id="unitPrice" class="rate-value">S/. 0.8233</output>
+            <small>Tarifa base: recibo ÷ medidor general = <output id="basePrice">S/. 0.80</output>/kWh</small>
+          </div>
+        </section>
+
+        <section class="totals-panel" aria-label="Resumen de cobro">
+          <div class="total-item">
+            <span>Consumo de submedidores</span>
+            <strong id="totalConsumption">730 kWh</strong>
+          </div>
+          <div class="total-item">
+            <span>Total a recaudar (recibo + excedente)</span>
+            <strong id="totalCharges">S/. 601.00</strong>
+          </div>
+          <p class="allocation-note" id="allocationNote" role="status" aria-live="polite">
+            El recibo más el excedente se reparte proporcionalmente entre los departamentos.
+          </p>
+        </section>
+
+        <section class="readings-section">
+          <div class="section-heading">
+            <div>
+              <h2>Lecturas por departamento</h2>
+              <p>Consumo del mes = lectura actual − lectura anterior</p>
+            </div>
+            <div class="section-actions">
+              <span class="department-count" id="departmentCount">6 departamentos</span>
+              <button class="add-button" id="addApartment" type="button">+ Agregar departamento</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="readings-table">
+              <thead>
+                <tr>
+                  <th scope="col">Departamento</th>
+                  <th scope="col">Lectura anterior</th>
+                  <th scope="col">Lectura actual</th>
+                  <th scope="col">Consumo del mes</th>
+                  <th scope="col">Cálculo</th>
+                  <th scope="col">Monto a cobrar</th>
+                </tr>
+              </thead>
+              <tbody id="apartmentRows"></tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row">TOTAL</th>
+                  <td>—</td>
+                  <td>—</td>
+                  <td id="tableTotalKwh">730 kWh</td>
+                  <td>—</td>
+                  <td id="tableTotalCharge">S/. 601.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </section>
+
+        <div class="report-actions">
+          <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+          <button class="download-button" id="downloadPdf" type="button">
+            <span aria-hidden="true">↓</span>
+            Descargar reporte PDF
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="page-footer">Lectora Nova · Lectura de medidores</footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a24">
+  <title>Lectora Nova | Lectura de medidores</title>
+  <link rel="stylesheet" href="../assets/css/meter-reader.css">
+  <script src="../assets/js/meter-reader.js" defer></script>
+</head>
+<body class="meter-page mobile-page" data-layout="mobile">
+  <div class="meter-shell">
+    <header class="app-header">
+      <a class="brand-identity" href="../index.html" aria-label="Volver a Lectora Nova">
+        <span class="brand-icon">LN</span>
+        <span class="brand-copy">
+          <strong>Lectora Nova</strong>
+          <small>Control de medidores</small>
+        </span>
+      </a>
+      <a class="device-link" href="dashboardP.html">Vista PC <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main>
+      <section class="page-heading">
+        <p class="eyebrow">LECTURA MENSUAL</p>
+        <h1>Consumo por departamento</h1>
+        <p class="page-description">Registra las lecturas y calcula el cobro de luz de cada departamento.</p>
+        <label class="month-field" for="billingMonth">
+          <span>Mes de consumo</span>
+          <input id="billingMonth" name="billingMonth" type="month" required>
+        </label>
+      </section>
+
+      <form id="meterForm">
+        <section class="receipt-grid" aria-label="Datos del recibo principal">
+          <label class="receipt-card" for="billTotal">
+            <span class="receipt-label">Monto del recibo</span>
+            <span class="money-input">
+              <span>S/.</span>
+              <input id="billTotal" name="billTotal" type="number" min="0" step="0.01" value="600" required>
+            </span>
+          </label>
+
+          <label class="receipt-card" for="generalKwh">
+            <span class="receipt-label">Medidor general</span>
+            <span class="unit-input">
+              <input id="generalKwh" name="generalKwh" type="number" min="0.01" step="0.01" value="750" required>
+              <span>kWh</span>
+            </span>
+          </label>
+
+          <label class="receipt-card" for="collectionMargin">
+            <span class="receipt-label">Excedente</span>
+            <span class="money-input">
+              <span>S/.</span>
+              <input id="collectionMargin" name="collectionMargin" type="number" min="0" step="0.01" value="1" required>
+            </span>
+          </label>
+
+          <div class="receipt-card rate-card">
+            <span class="receipt-label">Tarifa de cobro por kWh</span>
+            <output id="unitPrice" class="rate-value">S/. 0.8233</output>
+            <small class="base-rate">Tarifa base: <output id="basePrice">S/. 0.80</output>/kWh</small>
+          </div>
+        </section>
+
+        <section class="mobile-totals" aria-label="Resumen de cobro">
+          <div>
+            <span>Consumo total</span>
+            <strong id="totalConsumption">730 kWh</strong>
+          </div>
+          <div>
+            <span>Total a recaudar</span>
+            <strong id="totalCharges">S/. 601.00</strong>
+          </div>
+          <p class="allocation-note" id="allocationNote" role="status" aria-live="polite">
+            El recibo más el excedente se reparte proporcionalmente entre los departamentos.
+          </p>
+        </section>
+
+        <section class="readings-section">
+          <div class="section-heading">
+            <div>
+              <h2>Departamentos</h2>
+              <p>Actual − anterior = consumo</p>
+            </div>
+            <div class="section-actions">
+              <span class="department-count" id="departmentCount">6 en total</span>
+              <button class="add-button" id="addApartment" type="button">+ Agregar</button>
+            </div>
+          </div>
+          <div class="apartment-list" id="apartmentRows"></div>
+        </section>
+
+        <div class="report-actions">
+          <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+          <button class="download-button" id="downloadPdf" type="button">
+            <span aria-hidden="true">↓</span>
+            Descargar PDF
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <footer class="page-footer">Lectora Nova · Medidores</footer>
+  </div>
+</body>
+</html>
