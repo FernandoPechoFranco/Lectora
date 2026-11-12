@@ -1,95 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111116">
-  <title>Login &amp; Register</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <script src="assets/js/script.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Signup Form Animation</title>
+    <!-- Iconos de Boxicons (como en el video) -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="assets\css\styles.css">
 </head>
 <body>
-  <main class="auth-card" id="authCard" aria-label="Login and registration">
-    <div class="brand-panel" aria-hidden="true">
-      <div class="brand-copy login-copy">
-        <h2>WELCOME<br>BACK!</h2>
-        <p>We are happy to have you with us again. If you need anything, we are here to help.</p>
-      </div>
-      <div class="brand-copy register-copy">
-        <h2>WELCOME!</h2>
-        <p>We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
-      </div>
+
+    <div class="container">
+        <!-- Formas de fondo animadas (Degradado naranja) -->
+        <div class="curved-shape"></div>
+        <div class="curved-shape2"></div>
+
+        <!-- Formulario de Inicio de Sesión (Login) -->
+        <div class="form-box Login">
+            <h2 class="animation" style="--D:0; --S:21;">Login</h2>
+            <form action="#">
+                <div class="input-box animation" style="--D:1; --S:22;">
+                    <input type="text" required>
+                    <label>Username</label>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box animation" style="--D:2; --S:23;">
+                    <input type="password" required>
+                    <label>Password</label>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                <div class="input-box animation" style="--D:3; --S:24;">
+                    <button class="btn" type="submit">Login</button>
+                </div>
+                <div class="regi-link animation" style="--D:4; --S:25;">
+                    <p>Don't have an account? <a href="#" class="SignUpLink">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Texto de bienvenida para Login -->
+        <div class="info-content Login">
+            <h2 class="animation" style="--D:0; --S:20;">WELCOME BACK!</h2>
+            <p class="animation" style="--D:1; --S:21;">We are happy to have you with us again. If you need anything, we are here to help.</p>
+        </div>
+
+        <!-- Formulario de Registro (Register) -->
+        <div class="form-box Register">
+            <h2 class="animation" style="--li:17; --S:0;">Register</h2>
+            <form action="#">
+                <div class="input-box animation" style="--li:18; --S:1;">
+                    <input type="text" required>
+                    <label>Username</label>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box animation" style="--li:19; --S:2;">
+                    <input type="email" required>
+                    <label>Email</label>
+                    <i class='bx bxs-envelope'></i>
+                </div>
+                <div class="input-box animation" style="--li:20; --S:3;">
+                    <input type="password" required>
+                    <label>Password</label>
+                    <i class='bx bxs-lock-alt'></i>
+                </div>
+                <div class="input-box animation" style="--li:21; --S:4;">
+                    <button class="btn" type="submit">Register</button>
+                </div>
+                <div class="regi-link animation" style="--li:22; --S:5;">
+                    <p>Already have an account? <a href="#" class="SignInLink">Sign In</a></p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Texto de bienvenida para Registro -->
+        <div class="info-content Register">
+            <h2 class="animation" style="--li:17; --S:0;">WELCOME!</h2>
+            <p class="animation" style="--li:18; --S:1;">We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
+        </div>
     </div>
 
-    <section class="form-panel login-panel" id="loginPanel" aria-labelledby="loginTitle">
-      <form id="loginForm">
-        <h1 id="loginTitle">Login</h1>
-
-        <div class="field">
-          <label for="loginUsername">Username</label>
-          <div class="input-wrap">
-            <input id="loginUsername" name="username" type="text" autocomplete="username" required>
-            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.1 0-7 2.1-7 5v1h14v-1c0-2.9-2.9-5-7-5Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="loginPassword">Password</label>
-          <div class="input-wrap">
-            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required>
-            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <button class="submit-button" type="submit">Login</button>
-        <p class="form-status" id="loginStatus" role="status" aria-live="polite"></p>
-        <p class="switch-prompt">Don't have an account? <button class="text-button" type="button" data-mode="register">Sign Up</button></p>
-      </form>
-    </section>
-
-    <section class="form-panel register-panel" id="registerPanel" aria-labelledby="registerTitle" aria-hidden="true" inert>
-      <form id="registerForm">
-        <h1 id="registerTitle">Register</h1>
-
-        <div class="field">
-          <label for="registerUsername">Username</label>
-          <div class="input-wrap">
-            <input id="registerUsername" name="username" type="text" autocomplete="username" required>
-            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.1 0-7 2.1-7 5v1h14v-1c0-2.9-2.9-5-7-5Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="registerEmail">Email</label>
-          <div class="input-wrap">
-            <input id="registerEmail" name="email" type="email" autocomplete="email" required>
-            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M3 5h18v14H3V5Zm2 2v.4l7 5.2 7-5.2V7l-7 5-7-5Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="registerPassword">Password</label>
-          <div class="input-wrap">
-            <input id="registerPassword" name="password" type="password" autocomplete="new-password" minlength="8" required>
-            <svg class="field-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 10V7a5 5 0 0 1 10 0v3h1.5v11h-13V10H7Zm2 0h6V7a3 3 0 0 0-6 0v3Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <button class="submit-button" type="submit">Register</button>
-        <p class="form-status" id="registerStatus" role="status" aria-live="polite"></p>
-        <p class="switch-prompt">Already have an account? <button class="text-button" type="button" data-mode="login">Sign In</button></p>
-      </form>
-    </section>
-  </main>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>
