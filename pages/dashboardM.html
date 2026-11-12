@@ -50,18 +50,19 @@
             </span>
           </label>
 
-          <label class="receipt-card" for="collectionMargin">
-            <span class="receipt-label">Excedente</span>
+          <label class="receipt-card" for="departmentFee">
+            <span class="receipt-label">Extra por departamento</span>
             <span class="money-input">
               <span>S/.</span>
-              <input id="collectionMargin" name="collectionMargin" type="number" min="0" step="0.01" value="1" required>
+              <input id="departmentFee" name="departmentFee" type="number" min="0" step="0.01" value="2" required>
             </span>
+            <small>Se suma una vez a cada departamento</small>
           </label>
 
           <div class="receipt-card rate-card">
-            <span class="receipt-label">Tarifa de cobro por kWh</span>
-            <output id="unitPrice" class="rate-value">S/. 0.8233</output>
-            <small class="base-rate">Tarifa base: <output id="basePrice">S/. 0.80</output>/kWh</small>
+            <span class="receipt-label">Tarifa para repartir el recibo</span>
+            <output id="unitPrice" class="rate-value">S/. 0.8219</output>
+            <small class="base-rate">Referencia: <output id="basePrice">S/. 0.80</output>/kWh</small>
           </div>
         </section>
 
@@ -72,10 +73,10 @@
           </div>
           <div>
             <span>Total a recaudar</span>
-            <strong id="totalCharges">S/. 601.00</strong>
+            <strong id="totalCharges">S/. 612.00</strong>
           </div>
           <p class="allocation-note" id="allocationNote" role="status" aria-live="polite">
-            El recibo más el excedente se reparte proporcionalmente entre los departamentos.
+            El recibo se reparte por consumo y se suma el extra elegido a cada departamento.
           </p>
         </section>
 

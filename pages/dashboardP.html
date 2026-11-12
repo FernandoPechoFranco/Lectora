@@ -54,19 +54,19 @@
             <small>Consumo total indicado en el recibo</small>
           </label>
 
-          <label class="receipt-card" for="collectionMargin">
-            <span class="receipt-label">Excedente sobre el recibo</span>
+          <label class="receipt-card" for="departmentFee">
+            <span class="receipt-label">Extra por departamento</span>
             <span class="money-input">
               <span>S/.</span>
-              <input id="collectionMargin" name="collectionMargin" type="number" min="0" step="0.01" value="1" required>
+              <input id="departmentFee" name="departmentFee" type="number" min="0" step="0.01" value="2" required>
             </span>
-            <small>Se suma al total y se reparte por consumo</small>
+            <small>Se suma una vez a cada departamento</small>
           </label>
 
           <div class="receipt-card rate-card">
-            <span class="receipt-label">Tarifa de cobro por kWh</span>
-            <output id="unitPrice" class="rate-value">S/. 0.8233</output>
-            <small>Tarifa base: recibo ÷ medidor general = <output id="basePrice">S/. 0.80</output>/kWh</small>
+            <span class="receipt-label">Tarifa para repartir el recibo</span>
+            <output id="unitPrice" class="rate-value">S/. 0.8219</output>
+            <small>Referencia: recibo ÷ medidor general = <output id="basePrice">S/. 0.80</output>/kWh</small>
           </div>
         </section>
 
@@ -76,11 +76,11 @@
             <strong id="totalConsumption">730 kWh</strong>
           </div>
           <div class="total-item">
-            <span>Total a recaudar (recibo + excedente)</span>
-            <strong id="totalCharges">S/. 601.00</strong>
+            <span>Total a recaudar (recibo + extras)</span>
+            <strong id="totalCharges">S/. 612.00</strong>
           </div>
           <p class="allocation-note" id="allocationNote" role="status" aria-live="polite">
-            El recibo más el excedente se reparte proporcionalmente entre los departamentos.
+            El recibo se reparte por consumo y se suma el extra elegido a cada departamento.
           </p>
         </section>
 
@@ -106,6 +106,7 @@
                   <th scope="col">Consumo del mes</th>
                   <th scope="col">Cálculo</th>
                   <th scope="col">Monto a cobrar</th>
+                  <th class="action-header" scope="col">Acción</th>
                 </tr>
               </thead>
               <tbody id="apartmentRows"></tbody>
@@ -116,7 +117,8 @@
                   <td>—</td>
                   <td id="tableTotalKwh">730 kWh</td>
                   <td>—</td>
-                  <td id="tableTotalCharge">S/. 601.00</td>
+                  <td id="tableTotalCharge">S/. 612.00</td>
+                  <td class="action-cell">—</td>
                 </tr>
               </tfoot>
             </table>

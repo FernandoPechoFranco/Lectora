@@ -1,17 +1,17 @@
 const apartments = [
-  { number: "101", previous: 1100, current: 1280 },
-  { number: "102", previous: 850, current: 970 },
-  { number: "201", previous: 2050, current: 2250 },
-  { number: "202", previous: 500, current: 560 },
-  { number: "301", previous: 1400, current: 1510 },
-  { number: "302", previous: 920, current: 980 }
+  { number: "101", name: "Dep. 101", previous: 1100, current: 1280 },
+  { number: "102", name: "Dep. 102", previous: 850, current: 970 },
+  { number: "201", name: "Dep. 201", previous: 2050, current: 2250 },
+  { number: "202", name: "Dep. 202", previous: 500, current: 560 },
+  { number: "301", name: "Dep. 301", previous: 1400, current: 1510 },
+  { number: "302", name: "Dep. 302", previous: 920, current: 980 }
 ];
 
 const meterForm = document.getElementById("meterForm");
 const apartmentRows = document.getElementById("apartmentRows");
 const billTotalInput = document.getElementById("billTotal");
 const generalKwhInput = document.getElementById("generalKwh");
-const collectionMarginInput = document.getElementById("collectionMargin");
+const departmentFeeInput = document.getElementById("departmentFee");
 const monthInput = document.getElementById("billingMonth");
 const formMessage = document.getElementById("formMessage");
 const numberFormatter = new Intl.NumberFormat("es-PE", {
@@ -36,6 +36,21 @@ function formatRate(value) {
   })}`;
 }
 
+function escapeHtml(value) {
+  const escapedCharacters = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  };
+  return String(value).replace(/[&<>"']/g, (character) => escapedCharacters[character]);
+}
+
+function apartmentNameInput(apartment) {
+  return `<input class="apartment-name-input" id="name-${apartment.number}" name="apartmentName-${apartment.number}" type="text" value="${escapeHtml(apartment.name)}" maxlength="40" required aria-label="Nombre del departamento ${apartment.number}">`;
+}
+
 function readingInput(apartment, reading, value, label) {
   return `<input class="reading-input ${reading}-reading" id="${reading}-${apartment}" name="${reading}-${apartment}" type="number" min="0" step="0.01" value="${value}" required aria-label="${label} del departamento ${apartment}">`;
 }
@@ -44,20 +59,26 @@ function renderApartments() {
   if (document.body.dataset.layout === "desktop") {
     apartmentRows.innerHTML = apartments.map((apartment) => `
       <tr class="reading-entry" data-apartment="${apartment.number}">
-        <th class="apartment-name" scope="row">Dep. ${apartment.number}</th>
+        <th class="apartment-name" scope="row">${apartmentNameInput(apartment)}</th>
         <td>${readingInput(apartment.number, "previous", apartment.previous, "Lectura anterior")}</td>
         <td>${readingInput(apartment.number, "current", apartment.current, "Lectura actual")}</td>
         <td data-usage>—</td>
         <td class="calculation-cell" data-calculation>—</td>
         <td class="charge-cell" data-charge>—</td>
+        <td class="action-cell">
+          <button class="remove-button" type="button" data-remove-apartment="${apartment.number}" aria-label="Eliminar departamento ${apartment.number}" ${apartments.length === 1 ? "disabled" : ""}>Eliminar</button>
+        </td>
       </tr>
     `).join("");
   } else {
     apartmentRows.innerHTML = apartments.map((apartment) => `
       <article class="apartment-card reading-entry" data-apartment="${apartment.number}">
         <div class="apartment-card-head">
-          <h3>Departamento ${apartment.number}</h3>
-          <output class="apartment-charge" data-charge>—</output>
+          <h3>${apartmentNameInput(apartment)}</h3>
+          <div class="apartment-card-actions">
+            <output class="apartment-charge" data-charge>—</output>
+            <button class="remove-button" type="button" data-remove-apartment="${apartment.number}" aria-label="Eliminar departamento ${apartment.number}" ${apartments.length === 1 ? "disabled" : ""}>Quitar</button>
+          </div>
         </div>
         <div class="reading-fields">
           <label class="reading-field">Lectura anterior
@@ -76,7 +97,7 @@ function renderApartments() {
   }
 
   document.getElementById("departmentCount").textContent = document.body.dataset.layout === "desktop"
-    ? `${apartments.length} departamentos`
+    ? `${apartments.length} departamento${apartments.length === 1 ? "" : "s"}`
     : `${apartments.length} en total`;
 }
 
@@ -89,6 +110,7 @@ function saveCurrentReadings() {
   document.querySelectorAll(".reading-entry").forEach((row) => {
     const apartment = apartments.find((item) => item.number === row.dataset.apartment);
     if (!apartment) return;
+    apartment.name = row.querySelector(".apartment-name-input").value.trim();
     apartment.previous = row.querySelector(".previous-reading").value;
     apartment.current = row.querySelector(".current-reading").value;
   });
@@ -104,7 +126,7 @@ function distributeCents(results, targetCents, totalKwh) {
       remainder: exactCents - cents
     };
   });
-  let remainingCents = targetCents - allocations.reduce((sum, item) => sum + item.chargeCents, 0);
+  const remainingCents = targetCents - allocations.reduce((sum, item) => sum + item.chargeCents, 0);
   const rankedAllocations = [...allocations].sort((a, b) => b.remainder - a.remainder);
 
   for (let index = 0; index < remainingCents; index += 1) {
@@ -120,27 +142,30 @@ function distributeCents(results, targetCents, totalKwh) {
 function updateCalculations() {
   const billTotal = Number(billTotalInput.value);
   const generalKwh = Number(generalKwhInput.value);
-  const collectionMargin = Number(collectionMarginInput.value);
+  const departmentFee = Number(departmentFeeInput.value);
   const hasValidBill = billTotalInput.validity.valid;
   const hasValidGeneralKwh = generalKwhInput.validity.valid;
-  const hasValidMargin = collectionMarginInput.validity.valid;
-  const hasValidRate = hasValidBill && hasValidGeneralKwh && hasValidMargin;
-  const basePrice = hasValidBill && hasValidGeneralKwh
+  const hasValidDepartmentFee = departmentFeeInput.validity.valid;
+  const hasValidInputs = hasValidBill && hasValidGeneralKwh && hasValidDepartmentFee;
+  const referencePrice = hasValidBill && hasValidGeneralKwh
     ? billTotal / generalKwh
     : null;
   const results = [];
 
-  document.getElementById("basePrice").textContent = basePrice === null
+  document.getElementById("basePrice").textContent = referencePrice === null
     ? "—"
-    : formatMoney(basePrice);
+    : formatMoney(referencePrice);
 
   document.querySelectorAll(".reading-entry").forEach((row) => {
     const apartment = row.dataset.apartment;
+    const nameInput = row.querySelector(".apartment-name-input");
     const previousInput = row.querySelector(".previous-reading");
     const currentInput = row.querySelector(".current-reading");
+    const name = nameInput.value.trim();
     const previous = Number(previousInput.value);
     const current = Number(currentInput.value);
 
+    nameInput.setCustomValidity(name ? "" : "Ingresa el nombre del departamento.");
     currentInput.min = previousInput.value || "0";
     currentInput.setCustomValidity(
       previousInput.value !== ""
@@ -150,7 +175,11 @@ function updateCalculations() {
         : ""
     );
 
-    const valid = previousInput.validity.valid && currentInput.validity.valid;
+    const valid = nameInput.validity.valid
+      && previousInput.validity.valid
+      && currentInput.validity.valid;
+    nameInput.classList.toggle("is-invalid", !nameInput.validity.valid);
+    nameInput.setAttribute("aria-invalid", String(!nameInput.validity.valid));
     previousInput.classList.toggle("is-invalid", !previousInput.validity.valid);
     currentInput.classList.toggle("is-invalid", !currentInput.validity.valid);
     previousInput.setAttribute("aria-invalid", String(!previousInput.validity.valid));
@@ -160,22 +189,30 @@ function updateCalculations() {
     row.querySelector("[data-usage]").textContent = usage === null
       ? "Revisar lectura"
       : `${formatNumber(usage)} kWh`;
-    row.querySelector("[data-calculation]").textContent = usage === null
-      ? "—"
-      : `${formatNumber(usage)} × tarifa ajustada`;
 
     if (valid) {
-      results.push({ apartment, previous, current, usage });
+      results.push({ apartment, name, previous, current, usage });
     }
   });
 
   const totalKwh = results.reduce((sum, result) => sum + result.usage, 0);
   const invalidReadings = apartments.length - results.length;
-  const targetCents = Math.round((billTotal + collectionMargin) * 100);
-  const canAllocate = hasValidRate && invalidReadings === 0 && totalKwh > 0;
-  const unitPrice = canAllocate ? targetCents / 100 / totalKwh : null;
+  const billCents = Math.round(billTotal * 100);
+  const departmentFeeCents = Math.round(departmentFee * 100);
+  const surchargeCents = departmentFeeCents * apartments.length;
+  const targetCents = billCents + surchargeCents;
+  const canAllocate = hasValidInputs && invalidReadings === 0 && totalKwh > 0;
+  const unitPrice = canAllocate ? billCents / 100 / totalKwh : null;
   const allocatedResults = canAllocate
-    ? distributeCents(results, targetCents, totalKwh)
+    ? distributeCents(results, billCents, totalKwh).map((result) => {
+      const chargeCents = result.chargeCents + departmentFeeCents;
+      return {
+        ...result,
+        baseCharge: result.charge,
+        chargeCents,
+        charge: chargeCents / 100
+      };
+    })
     : results.map((result) => ({ ...result, charge: null }));
   const chargesByApartment = new Map(
     allocatedResults.map((result) => [result.apartment, result])
@@ -184,7 +221,7 @@ function updateCalculations() {
   document.querySelectorAll(".reading-entry").forEach((row) => {
     const result = chargesByApartment.get(row.dataset.apartment);
     row.querySelector("[data-calculation]").textContent = result && unitPrice !== null
-      ? `${formatNumber(result.usage)} × ${formatRate(unitPrice)}`
+      ? `${formatNumber(result.usage)} × ${formatRate(unitPrice)} + ${formatMoney(departmentFee)}`
       : "—";
     row.querySelector("[data-charge]").textContent = result && result.charge !== null
       ? formatMoney(result.charge)
@@ -192,6 +229,7 @@ function updateCalculations() {
   });
 
   const totalCharge = canAllocate ? targetCents / 100 : null;
+  const totalDepartmentFees = canAllocate ? surchargeCents / 100 : null;
   const totalKwhText = `${formatNumber(totalKwh)} kWh`;
   const totalChargeText = totalCharge === null ? "—" : formatMoney(totalCharge);
   document.getElementById("unitPrice").textContent = unitPrice === null
@@ -206,28 +244,24 @@ function updateCalculations() {
   if (tableTotalCharge) tableTotalCharge.textContent = totalChargeText;
 
   const allocationNote = document.getElementById("allocationNote");
-  allocationNote.classList.toggle("warning", invalidReadings > 0 || !hasValidRate || totalKwh === 0);
+  allocationNote.classList.toggle("warning", invalidReadings > 0 || !hasValidInputs || totalKwh === 0);
   if (invalidReadings > 0) {
-    allocationNote.textContent = `Completa o corrige ${invalidReadings} lectura${invalidReadings === 1 ? "" : "s"} para calcular el total.`;
-  } else if (!hasValidRate) {
-    allocationNote.textContent = "Ingresa un monto, un consumo general y un excedente válidos.";
+    allocationNote.textContent = `Completa o corrige los datos de ${invalidReadings} departamento${invalidReadings === 1 ? "" : "s"} para calcular el total.`;
+  } else if (!hasValidInputs) {
+    allocationNote.textContent = "Ingresa un monto, un consumo general y un extra por departamento válidos.";
   } else if (totalKwh === 0) {
     allocationNote.textContent = "Debe haber consumo en al menos un departamento para repartir el cobro.";
   } else {
-    const difference = generalKwh - totalKwh;
-    const comparison = Math.abs(difference) < 0.005
-      ? "Los submedidores coinciden con el medidor general."
-      : difference > 0
-        ? `${formatNumber(difference)} kWh del medidor general no están asignados a submedidores.`
-        : `Los submedidores superan el medidor general por ${formatNumber(Math.abs(difference))} kWh.`;
-    allocationNote.textContent = `Tarifa base ${formatMoney(basePrice)}/kWh; tarifa de cobro ${formatRate(unitPrice)}/kWh. Total distribuido: ${formatMoney(totalCharge)} (${comparison})`;
+    const apartmentLabel = apartments.length === 1 ? "departamento" : "departamentos";
+    allocationNote.textContent = `${formatMoney(billTotal)} del recibo + ${formatMoney(departmentFee)} × ${apartments.length} ${apartmentLabel} = ${formatMoney(totalCharge)}. Extra total: ${formatMoney(totalDepartmentFees)}.`;
   }
 
   return {
     billTotal,
     generalKwh,
-    collectionMargin,
-    basePrice,
+    departmentFee,
+    totalDepartmentFees,
+    referencePrice,
     unitPrice,
     totalKwh,
     totalCharge,
@@ -261,14 +295,16 @@ function createPdf(calculation) {
     const lines = [
       isFirstPage ? "LECTORA NOVA - REPORTE DE LECTURAS" : "LECTORA NOVA - REPORTE DE LECTURAS (CONT.)",
       `Periodo: ${period}`,
-      `Monto del recibo: ${formatMoney(calculation.billTotal)}  Excedente: ${formatMoney(calculation.collectionMargin)}`,
+      `Monto del recibo: ${formatMoney(calculation.billTotal)}`,
+      `Extra por departamento: ${formatMoney(calculation.departmentFee)} x ${calculation.results.length} = ${formatMoney(calculation.totalDepartmentFees)}`,
       `Medidor general: ${formatNumber(calculation.generalKwh)} kWh`,
-      `Tarifa base: ${formatMoney(calculation.basePrice)}/kWh  Tarifa de cobro: ${formatRate(calculation.unitPrice)}/kWh`,
+      `Tarifa para repartir el recibo: ${formatRate(calculation.unitPrice)}/kWh`,
+      `Referencia del medidor general: ${formatMoney(calculation.referencePrice)}/kWh`,
       "",
       "DEPTO       ANTERIOR    ACTUAL      CONSUMO     COBRO",
       "----------------------------------------------------------",
       ...pageResults.map((result) => (
-        `Dep. ${result.apartment}`.padEnd(12)
+        result.name.slice(0, 18).padEnd(20)
         + formatNumber(result.previous).padStart(9)
         + formatNumber(result.current).padStart(11)
         + `${formatNumber(result.usage)} kWh`.padStart(12)
@@ -357,11 +393,37 @@ function addApartment() {
     (largest, apartment) => Math.max(largest, Number(apartment.number) || 0),
     0
   ) + 1;
-  apartments.push({ number: String(nextNumber), previous: "", current: "" });
+  apartments.push({
+    number: String(nextNumber),
+    name: `Dep. ${nextNumber}`,
+    previous: "",
+    current: ""
+  });
   renderApartments();
   formMessage.textContent = "";
   updateCalculations();
   document.getElementById(`previous-${nextNumber}`).focus();
+}
+
+function removeApartment(event) {
+  const button = event.target.closest("[data-remove-apartment]");
+  if (!button) return;
+  if (apartments.length <= 1) {
+    formMessage.textContent = "Debe quedar al menos un departamento.";
+    return;
+  }
+
+  saveCurrentReadings();
+  const apartmentNumber = button.dataset.removeApartment;
+  const removedIndex = apartments.findIndex((apartment) => apartment.number === apartmentNumber);
+  if (removedIndex === -1) return;
+
+  apartments.splice(removedIndex, 1);
+  renderApartments();
+  formMessage.textContent = `Departamento ${apartmentNumber} eliminado.`;
+  updateCalculations();
+  const focusIndex = Math.min(removedIndex, apartments.length - 1);
+  document.getElementById(`previous-${apartments[focusIndex].number}`).focus();
 }
 
 renderApartments();
@@ -375,5 +437,6 @@ meterForm.addEventListener("submit", (event) => {
   downloadReport();
 });
 document.getElementById("addApartment").addEventListener("click", addApartment);
+apartmentRows.addEventListener("click", removeApartment);
 document.getElementById("downloadPdf").addEventListener("click", downloadReport);
 updateCalculations();

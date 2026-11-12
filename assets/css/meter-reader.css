@@ -322,6 +322,33 @@ input {
   outline-offset: 3px;
 }
 
+.remove-button {
+  min-height: 31px;
+  padding: 0 9px;
+  border: 1px solid rgba(255, 119, 119, 0.34);
+  border-radius: 7px;
+  background: rgba(255, 119, 119, 0.08);
+  color: #ffaaa5;
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.remove-button:hover:not(:disabled) {
+  border-color: rgba(255, 119, 119, 0.75);
+  background: rgba(255, 119, 119, 0.16);
+}
+
+.remove-button:focus-visible {
+  outline: 2px solid #ffaaa5;
+  outline-offset: 2px;
+}
+
+.remove-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--line);
@@ -331,7 +358,7 @@ input {
 
 .readings-table {
   width: 100%;
-  min-width: 980px;
+  min-width: 1080px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -371,6 +398,29 @@ input {
   font-weight: 700;
 }
 
+.apartment-name-input {
+  width: 160px;
+  height: 36px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  outline: 0;
+  background: #1d1d25;
+  color: #fff;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.apartment-name-input:focus {
+  border-color: var(--orange-light);
+  box-shadow: 0 0 0 3px rgba(228, 96, 51, 0.14);
+}
+
+.apartment-name-input.is-invalid {
+  border-color: #ff7777;
+}
+
 .reading-input {
   width: 118px;
   height: 37px;
@@ -389,6 +439,11 @@ input {
 .charge-cell {
   color: #ffad8b !important;
   font-weight: 700;
+}
+
+.action-cell,
+.action-header {
+  text-align: right;
 }
 
 .report-actions {
@@ -660,15 +715,34 @@ input {
     margin-bottom: 11px;
   }
 
+  .apartment-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .apartment-card h3 {
     margin: 0;
     font-size: 0.91rem;
+  }
+
+  .apartment-name-input {
+    width: 120px;
+    height: 34px;
+    padding: 0 6px;
+    font-size: 0.78rem;
   }
 
   .apartment-charge {
     color: #ffad8b;
     font-size: 0.89rem;
     font-weight: 750;
+  }
+
+  .remove-button {
+    min-height: 29px;
+    padding: 0 7px;
+    font-size: 0.67rem;
   }
 
   .reading-fields {
@@ -752,8 +826,15 @@ input {
   }
 
   .device-link,
+  .add-button,
+  .remove-button,
   .download-button,
   .form-message {
+    display: none;
+  }
+
+  .action-cell,
+  .action-header {
     display: none;
   }
 
