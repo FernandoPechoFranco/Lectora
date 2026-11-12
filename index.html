@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,67 +15,72 @@
         <div class="curved-shape"></div>
         <div class="curved-shape2"></div>
 
+        <div class="brand-mark" style="--D:0; --S:21;">
+            <span class="brand-name" data-i18n="brandName">Lectora Nova</span>
+            <span class="brand-tagline" data-i18n="brandTagline">Historias que te llevan más lejos.</span>
+        </div>
+
         <!-- Formulario de Inicio de Sesión (Login) -->
         <div class="form-box Login">
-            <h2 class="animation" style="--D:0; --S:21;">Login</h2>
+            <h2 class="animation" data-i18n="loginTitle" style="--D:0; --S:21;">Login</h2>
             <form action="#">
                 <div class="input-box animation" style="--D:1; --S:22;">
                     <input type="text" required>
-                    <label>Username</label>
+                    <label data-i18n="username">Username</label>
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box animation" style="--D:2; --S:23;">
                     <input type="password" required>
-                    <label>Password</label>
+                    <label data-i18n="password">Password</label>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
                 <div class="input-box animation" style="--D:3; --S:24;">
-                    <button class="btn" type="submit">Login</button>
+                    <button class="btn" type="submit" data-i18n="loginButton">Login</button>
                 </div>
                 <div class="regi-link animation" style="--D:4; --S:25;">
-                    <p>Don't have an account? <a href="#" class="SignUpLink">Sign Up</a></p>
+                    <p><span data-i18n="noAccount">Don't have an account?</span> <a href="#" class="SignUpLink" data-i18n="signUp">Sign Up</a></p>
                 </div>
             </form>
         </div>
 
         <!-- Texto de bienvenida para Login -->
         <div class="info-content Login">
-            <h2 class="animation" style="--D:0; --S:20;">WELCOME BACK!</h2>
-            <p class="animation" style="--D:1; --S:21;">We are happy to have you with us again. If you need anything, we are here to help.</p>
+            <h2 class="animation" data-i18n="welcomeBackTitle" style="--D:0; --S:20;">WELCOME BACK!</h2>
+            <p class="animation" data-i18n="welcomeBackText" style="--D:1; --S:21;">We are happy to have you with us again. If you need anything, we are here to help.</p>
         </div>
 
         <!-- Formulario de Registro (Register) -->
         <div class="form-box Register">
-            <h2 class="animation" style="--li:17; --S:0;">Register</h2>
+            <h2 class="animation" data-i18n="registerTitle" style="--li:17; --S:0;">Register</h2>
             <form action="#">
                 <div class="input-box animation" style="--li:18; --S:1;">
                     <input type="text" required>
-                    <label>Username</label>
+                    <label data-i18n="username">Username</label>
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box animation" style="--li:19; --S:2;">
                     <input type="email" required>
-                    <label>Email</label>
+                    <label data-i18n="email">Email</label>
                     <i class='bx bxs-envelope'></i>
                 </div>
                 <div class="input-box animation" style="--li:20; --S:3;">
                     <input type="password" required>
-                    <label>Password</label>
+                    <label data-i18n="password">Password</label>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
                 <div class="input-box animation" style="--li:21; --S:4;">
-                    <button class="btn" type="submit">Register</button>
+                    <button class="btn" type="submit" data-i18n="registerButton">Register</button>
                 </div>
                 <div class="regi-link animation" style="--li:22; --S:5;">
-                    <p>Already have an account? <a href="#" class="SignInLink">Sign In</a></p>
+                    <p><span data-i18n="haveAccount">Already have an account?</span> <a href="#" class="SignInLink" data-i18n="signIn">Sign In</a></p>
                 </div>
             </form>
         </div>
 
         <!-- Texto de bienvenida para Registro -->
         <div class="info-content Register">
-            <h2 class="animation" style="--li:17; --S:0;">WELCOME!</h2>
-            <p class="animation" style="--li:18; --S:1;">We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
+            <h2 class="animation" data-i18n="welcomeTitle" style="--li:17; --S:0;">WELCOME!</h2>
+            <p class="animation" data-i18n="welcomeText" style="--li:18; --S:1;">We're delighted to have you here. If you need any assistance, feel free to reach out.</p>
         </div>
     </div>
 
