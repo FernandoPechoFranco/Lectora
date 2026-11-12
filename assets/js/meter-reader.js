@@ -279,71 +279,165 @@ function pdfText(value) {
     .replace(/\)/g, "\\)");
 }
 
+function pdfColor(color) {
+  return color.map((value) => value.toFixed(3)).join(" ");
+}
+
+function pdfTextAt(value, x, y, size, font, color) {
+  return `${pdfColor(color)} rg BT /${font} ${size} Tf ${x} ${y} Td (${pdfText(value)}) Tj ET`;
+}
+
+function pdfFillRect(x, y, width, height, color) {
+  return `${pdfColor(color)} rg ${x} ${y} ${width} ${height} re f`;
+}
+
+function pdfLine(x1, y1, x2, y2, color, width) {
+  return `${pdfColor(color)} RG ${width} w ${x1} ${y1} m ${x2} ${y2} l S`;
+}
+
 function createPdf(calculation) {
   const month = monthInput.value;
   const period = month
     ? new Intl.DateTimeFormat("es-PE", { month: "long", year: "numeric" })
       .format(new Date(`${month}-01T12:00:00`))
     : "Mes no indicado";
-  const rowsPerPage = 27;
+  const generated = new Date().toLocaleDateString("es-PE");
+  const rowsPerPage = 23;
   const pages = [];
 
   for (let start = 0; start < calculation.results.length; start += rowsPerPage) {
-    const pageResults = calculation.results.slice(start, start + rowsPerPage);
-    const isFirstPage = start === 0;
-    const isLastPage = start + rowsPerPage >= calculation.results.length;
-    const lines = [
-      isFirstPage ? "LECTORA NOVA - REPORTE DE LECTURAS" : "LECTORA NOVA - REPORTE DE LECTURAS (CONT.)",
-      `Periodo: ${period}`,
-      `Monto del recibo: ${formatMoney(calculation.billTotal)}`,
-      `Extra por departamento: ${formatMoney(calculation.departmentFee)} x ${calculation.results.length} = ${formatMoney(calculation.totalDepartmentFees)}`,
-      `Medidor general: ${formatNumber(calculation.generalKwh)} kWh`,
-      `Tarifa para repartir el recibo: ${formatRate(calculation.unitPrice)}/kWh`,
-      `Referencia del medidor general: ${formatMoney(calculation.referencePrice)}/kWh`,
-      "",
-      "DEPTO       ANTERIOR    ACTUAL      CONSUMO     COBRO",
-      "----------------------------------------------------------",
-      ...pageResults.map((result) => (
-        result.name.slice(0, 18).padEnd(20)
-        + formatNumber(result.previous).padStart(9)
-        + formatNumber(result.current).padStart(11)
-        + `${formatNumber(result.usage)} kWh`.padStart(12)
-        + formatMoney(result.charge).padStart(15)
-      ))
-    ];
-
-    if (isLastPage) {
-      lines.push(
-        "----------------------------------------------------------",
-        `TOTAL DE SUBMEDIDORES: ${formatNumber(calculation.totalKwh)} kWh`,
-        `TOTAL A RECAUDAR: ${formatMoney(calculation.totalCharge)}`
-      );
-    }
-    pages.push(lines);
+    pages.push({
+      results: calculation.results.slice(start, start + rowsPerPage),
+      isLast: start + rowsPerPage >= calculation.results.length
+    });
   }
 
-  pages.forEach((lines, pageIndex) => {
-    lines.push(`Pagina ${pageIndex + 1} de ${pages.length}`);
+  const colors = {
+    navy: [0.102, 0.114, 0.169],
+    orange: [0.894, 0.345, 0.184],
+    ink: [0.153, 0.161, 0.204],
+    muted: [0.435, 0.447, 0.486],
+    light: [0.957, 0.961, 0.973],
+    line: [0.867, 0.878, 0.898],
+    white: [1, 1, 1]
+  };
+  const pageCommands = pages.map((page, pageIndex) => {
+    const commands = [];
+    const totalApartments = calculation.results.length;
+    const extraLabel = `EXTRA POR DEPTO. (${formatMoney(calculation.departmentFee)} x ${totalApartments})`;
+
+    commands.push(
+      pdfFillRect(0, 748, 595, 94, colors.navy),
+      pdfFillRect(0, 744, 595, 4, colors.orange),
+      pdfFillRect(40, 771, 48, 48, colors.orange),
+      pdfTextAt("LN", 51, 786, 20, "F2", colors.white),
+      pdfTextAt("LECTORA NOVA", 102, 805, 16, "F2", colors.white),
+      pdfTextAt("CONTROL DE MEDIDORES", 103, 786, 8, "F1", [0.824, 0.839, 0.878]),
+      pdfTextAt(pageIndex === 0 ? "REPORTE MENSUAL" : "REPORTE MENSUAL - CONTINUACION", 397, 805, 9, "F2", colors.white),
+      pdfTextAt("LECTURAS Y COBROS", 397, 787, 8, "F1", [0.824, 0.839, 0.878]),
+      pdfTextAt(`PERIODO  /  ${period.toLocaleUpperCase("es-PE")}`, 40, 719, 9, "F2", colors.ink)
+    );
+
+    const cardY = 625;
+    const cardWidth = 164;
+    const cardHeight = 75;
+    const cardXs = [40, 216, 392];
+    const cardValues = [
+      { label: "MONTO DEL RECIBO", value: formatMoney(calculation.billTotal), highlight: false },
+      { label: extraLabel, value: formatMoney(calculation.totalDepartmentFees), highlight: false },
+      { label: "TOTAL A RECAUDAR", value: formatMoney(calculation.totalCharge), highlight: true }
+    ];
+
+    cardValues.forEach((card, index) => {
+      const x = cardXs[index];
+      const fill = card.highlight ? colors.navy : colors.light;
+      const mainColor = card.highlight ? colors.white : colors.ink;
+      const secondaryColor = card.highlight ? [0.91, 0.78, 0.72] : colors.muted;
+      commands.push(
+        pdfFillRect(x, cardY, cardWidth, cardHeight, fill),
+        `${pdfColor(card.highlight ? colors.orange : colors.line)} RG 0.7 w ${x} ${cardY} ${cardWidth} ${cardHeight} re S`,
+        pdfTextAt(card.label, x + 12, cardY + 53, 7, "F2", secondaryColor),
+        pdfTextAt(card.value, x + 12, cardY + 25, 16, "F2", mainColor)
+      );
+      if (card.highlight) {
+        commands.push(pdfFillRect(x, cardY, 4, cardHeight, colors.orange));
+      }
+    });
+
+    const details = [
+      { x: 42, label: "MEDIDOR GENERAL", value: `${formatNumber(calculation.generalKwh)} kWh` },
+      { x: 222, label: "TARIFA PARA REPARTIR", value: `${formatRate(calculation.unitPrice)}/kWh` },
+      { x: 402, label: "REFERENCIA GENERAL", value: `${formatMoney(calculation.referencePrice)}/kWh` }
+    ];
+    details.forEach((detail) => {
+      commands.push(
+        pdfTextAt(detail.label, detail.x, 604, 7, "F2", colors.muted),
+        pdfTextAt(detail.value, detail.x, 587, 9, "F2", colors.ink)
+      );
+    });
+
+    const tableX = 40;
+    const tableWidth = 515;
+    const tableHeaderY = 552;
+    const rowHeight = 18;
+    commands.push(
+      pdfFillRect(tableX, tableHeaderY, tableWidth, 28, colors.navy),
+      pdfTextAt("DEPARTAMENTO", 50, tableHeaderY + 10, 7, "F2", colors.white),
+      pdfTextAt("ANTERIOR", 223, tableHeaderY + 10, 7, "F2", colors.white),
+      pdfTextAt("ACTUAL", 307, tableHeaderY + 10, 7, "F2", colors.white),
+      pdfTextAt("CONSUMO", 389, tableHeaderY + 10, 7, "F2", colors.white),
+      pdfTextAt("COBRO", 486, tableHeaderY + 10, 7, "F2", colors.white)
+    );
+
+    page.results.forEach((result, rowIndex) => {
+      const rowBottom = tableHeaderY - (rowIndex + 1) * rowHeight;
+      const textY = rowBottom + 6;
+      if (rowIndex % 2 === 0) {
+        commands.push(pdfFillRect(tableX, rowBottom, tableWidth, rowHeight, colors.light));
+      }
+      commands.push(
+        pdfLine(tableX, rowBottom, tableX + tableWidth, rowBottom, colors.line, 0.45),
+        pdfTextAt(result.name.slice(0, 28), 50, textY, 8, "F2", colors.ink),
+        pdfTextAt(formatNumber(result.previous), 223, textY, 8, "F1", colors.ink),
+        pdfTextAt(formatNumber(result.current), 307, textY, 8, "F1", colors.ink),
+        pdfTextAt(`${formatNumber(result.usage)} kWh`, 389, textY, 8, "F1", colors.muted),
+        pdfTextAt(formatMoney(result.charge), 486, textY, 8, "F2", colors.orange)
+      );
+    });
+
+    if (page.isLast) {
+      commands.push(
+        pdfFillRect(40, 77, 515, 36, colors.navy),
+        pdfFillRect(40, 77, 4, 36, colors.orange),
+        pdfTextAt("CONSUMO DE SUBMEDIDORES", 55, 96, 7, "F2", [0.824, 0.839, 0.878]),
+        pdfTextAt(`${formatNumber(calculation.totalKwh)} kWh`, 55, 83, 10, "F2", colors.white),
+        pdfTextAt("TOTAL A RECAUDAR", 390, 96, 7, "F2", [0.824, 0.839, 0.878]),
+        pdfTextAt(formatMoney(calculation.totalCharge), 390, 82, 12, "F2", colors.white)
+      );
+    }
+
+    commands.push(
+      pdfLine(40, 57, 555, 57, colors.line, 0.6),
+      pdfTextAt(`LECTORA NOVA  /  GENERADO ${generated}`, 40, 39, 7, "F1", colors.muted),
+      pdfTextAt(`PAGINA ${pageIndex + 1} DE ${pages.length}`, 474, 39, 7, "F2", colors.muted)
+    );
+    return commands.join("\n");
   });
 
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     "",
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>"
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"
   ];
   const pageObjectIds = [];
 
-  pages.forEach((lines) => {
+  pageCommands.forEach((commands) => {
     const pageObjectId = objects.length + 1;
     const contentObjectId = pageObjectId + 1;
-    const commands = lines.map((line, index) => {
-      const fontSize = index === 0 ? 14 : 9;
-      const y = 800 - index * 19;
-      return `BT /F1 ${fontSize} Tf 42 ${y} Td (${pdfText(line)}) Tj ET`;
-    }).join("\n");
     pageObjectIds.push(pageObjectId);
     objects.push(
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentObjectId} 0 R >>`,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentObjectId} 0 R >>`,
       `<< /Length ${commands.length} >>\nstream\n${commands}\nendstream`
     );
   });
