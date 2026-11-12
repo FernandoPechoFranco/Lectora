@@ -90,21 +90,6 @@ input {
   font-size: 0.75rem;
 }
 
-.device-link {
-  padding: 9px 13px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  color: #f1d2c5;
-  font-size: 0.84rem;
-  text-decoration: none;
-  transition: border-color 180ms ease, background 180ms ease;
-}
-
-.device-link:hover {
-  border-color: var(--orange);
-  background: rgba(228, 96, 51, 0.1);
-}
-
 .page-heading {
   display: flex;
   align-items: flex-end;
@@ -481,8 +466,7 @@ input {
   filter: brightness(1.1);
 }
 
-.download-button:focus-visible,
-.device-link:focus-visible {
+.download-button:focus-visible {
   outline: 2px solid #ffb18e;
   outline-offset: 3px;
 }
@@ -547,11 +531,6 @@ input {
 
   .brand-copy small {
     font-size: 0.68rem;
-  }
-
-  .device-link {
-    padding: 8px 9px;
-    font-size: 0.73rem;
   }
 
   .page-heading {
@@ -825,7 +804,6 @@ input {
     break-inside: avoid;
   }
 
-  .device-link,
   .add-button,
   .remove-button,
   .download-button,
